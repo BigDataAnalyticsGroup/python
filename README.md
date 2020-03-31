@@ -1,4 +1,4 @@
-# Python Einführung
+# Python Introduction
 
 A short intro to Python for Java/C++ developers.
 
