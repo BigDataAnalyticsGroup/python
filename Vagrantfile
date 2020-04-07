@@ -89,6 +89,8 @@ Vagrant.configure("2") do |config|
         numpy \
         scipy \
         matplotlib \
+        altair \
+        vega_datasets \
         pandas \
         jupyter \
         python-graphviz \
