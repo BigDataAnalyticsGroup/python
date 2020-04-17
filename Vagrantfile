@@ -85,31 +85,7 @@ Vagrant.configure("2") do |config|
         source /opt/miniconda3/etc/profile.d/conda.sh # add conda to path
         conda activate bde # make sure to activate virtual environment
         conda config --add channels conda-forge
-        conda install -n bde -y --quiet \
-        numpy \
-        scipy \
-        matplotlib \
-        altair \
-        vega_datasets \
-        pandas \
-        jupyter \
-        python-graphviz \
-        pyspark \
-        findspark \
-        psycopg2 \
-        scrypt \
-        seaborn \
-        plotly \
-        tqdm \
-        ipywidgets \
-        ipycanvas \
-        ipyevents \
-        nltk \
-        python-duckdb \
-        scikit-learn \
-        pandasql \
-        sqlparse \
-        jupyter_contrib_nbextensions
+        conda install -n bde -y --quiet numpy scipy matplotlib altair vega_datasets pandas jupyter python-graphviz pyspark findspark psycopg2 scrypt seaborn plotly tqdm ipywidgets ipycanvas ipyevents nltk python-duckdb scikit-learn pandasql sqlparse jupyter_contrib_nbextensions
         jupyter nbextension enable varInspector/main
     SHELL
 
