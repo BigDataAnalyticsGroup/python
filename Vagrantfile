@@ -51,8 +51,8 @@ Vagrant.configure("2") do |config|
         pacman -S --noconfirm --quiet --needed python python-pip graphviz
 
         # Install jdk8
-        echo "Installing JDK11..."
-        pacman -S --noconfirm --quiet --needed jdk11-openjdk
+        echo "Installing JDK8..."
+        pacman -S --noconfirm --quiet --needed jdk8-openjdk
 
         # Add .local/bin to PATH
         if ! $(grep -Fxq 'export PATH="$PATH:/home/vagrant/.local/bin"' /etc/profile)
