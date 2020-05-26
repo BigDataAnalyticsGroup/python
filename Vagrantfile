@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
 
     # Box Settings
     config.vm.box = "archlinux/archlinux"
-    config.vm.box_version = "2020.05.06"
+    # config.vm.box_version = "2020.05.06"
 
     # Box name
     config.vm.define "bde_box"
