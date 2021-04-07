@@ -5,14 +5,16 @@ Vagrant.configure("2") do |config|
 
     # Box Settings
     config.vm.box = "archlinux/archlinux"
-    # config.vm.box_version = "2020.05.06"
+    # config.vm.box_version = "v20210401.18564"
 
     # Box name
     config.vm.define "bde_box"
 
     # Network Settings
     config.vm.hostname = "archlinux"
-    config.vm.network "forwarded_port", guest: 8888, host: 8888
+    config.vm.network "forwarded_port", guest: 8888, host: 8888 # Jupyter
+    config.vm.network "forwarded_port", guest: 4040, host: 4040 # Spark
+    config.vm.network "forwarded_port", guest: 7474, host: 7474 # Neo4j (currently not working)
 
     # Folder Settings
     config.vm.synced_folder ".", "/vagrant", disabled: true
@@ -21,7 +23,7 @@ Vagrant.configure("2") do |config|
     # Provider Settings
     config.vm.provider "virtualbox" do |vb|
         # Set a name for the machine displayed in VirtualBox
-        vb.name = "bde20"
+        vb.name = "bde"
         # Customize the amount of memory on the VM
         vb.memory = "2048"
         # Customize network settings on the VM
@@ -50,14 +52,22 @@ Vagrant.configure("2") do |config|
         echo "Installing Python..."
         pacman -S --noconfirm --quiet --needed python python-pip graphviz
 
-        # Install jdk8
-        echo "Installing JDK8..."
-        pacman -S --noconfirm --quiet --needed jdk8-openjdk
+        # Install jdk11
+        echo "Installing JDK11..."
+        pacman -S --noconfirm --quiet --needed jdk11-openjdk
 
         # Add .local/bin to PATH
         if ! $(grep -Fxq 'export PATH="$PATH:/home/vagrant/.local/bin"' /etc/profile)
         then
             echo 'export PATH="$PATH:/home/vagrant/.local/bin"' >> /etc/profile
+        fi
+
+        # Add Apache Spark to PATH
+        SPARK_HOME=/opt/apache-spark
+        if ! $(grep -q "SPARK_HOME" /etc/profile)
+        then
+            echo "export SPARK_HOME=$SPARK_HOME" >> /etc/profile
+            echo 'export PATH="$PATH:$SPARK_HOME/bin"' >> /etc/profile
         fi
     SHELL
 
@@ -84,8 +94,35 @@ Vagrant.configure("2") do |config|
         echo "Installing Python packages..."
         source /opt/miniconda3/etc/profile.d/conda.sh # add conda to path
         conda activate bde # make sure to activate virtual environment
-        conda config --add channels conda-forge
-        conda install -n bde -y --quiet numpy scipy matplotlib altair vega_datasets pandas jupyter python-graphviz pyspark findspark psycopg2 scrypt seaborn plotly tqdm ipywidgets ipycanvas ipyevents nltk python-duckdb scikit-learn pandasql sqlparse jupyter_contrib_nbextensions
+        # conda config --add channels conda-forge
+
+        conda install -n bde -y --quiet numpy
+        conda install -n bde -y --quiet scipy
+        conda install -n bde -y --quiet matplotlib
+        conda install -n bde -y --quiet altair
+        conda install -n bde -y --quiet vega_datasets
+        conda install -n bde -y --quiet pandas
+        conda install -n bde -y --quiet jupyter
+        conda install -n bde -y --quiet python-graphviz
+        conda install -n bde -y --quiet pyspark
+        conda install -n bde -y --quiet findspark
+        conda install -n bde -y --quiet psycopg2
+        conda install -n bde -y --quiet scrypt
+        conda install -n bde -y --quiet seaborn
+        conda install -n bde -y --quiet plotly
+        conda install -n bde -y --quiet tqdm
+        conda install -n bde -y --quiet ipywidgets
+        conda install -n bde -y --quiet ipycanvas
+        conda install -n bde -y --quiet ipyevents
+        conda install -n bde -y --quiet nltk
+        conda install -n bde -y --quiet python-duckdb
+        conda install -n bde -y --quiet scikit-learn
+        conda install -n bde -y --quiet pandasql
+        conda install -n bde -y --quiet sqlparse
+        conda install -n bde -y --quiet jupyter_contrib_nbextensions
+        conda install -n bde -y --quiet neo4j-python-driver
+        conda install -n bde -y --quiet py2neo
+
         jupyter nbextension enable varInspector/main
     SHELL
 
@@ -105,29 +142,32 @@ Vagrant.configure("2") do |config|
     SHELL
 
     # Install and configure Apache Spark
-    config.vm.provision "spark", type: "shell", privileged: true, run: "once", inline: <<-SHELL
+    config.vm.provision "spark", type: "shell", privileged: false, run: "once", inline: <<-SHELL
         # Install Apache Spark
         echo "Installing Apache Spark..."
+        git clone https://aur.archlinux.org/apache-spark.git
+        cd apache-spark
+        makepkg -si --noconfirm --noprogressbar
+        cd ..
+        rm -r apache-spark
 
-        # Set variables
-        APACHE_SPARK_VERSION=2.4.5
-        HADOOP_VERSION=2.7
-        SPARK_HOME=/opt/apache-spark
+        source /etc/profile
+        source ~/.bashrc
+    SHELL
 
-        if [ ! -d "$SPARK_HOME" ] || [ ! -n "$(ls -A $SPARK_HOME)" ];
-        then
-            mkdir -p "$SPARK_HOME"
-            curl    --silent \
-                    --output apache-spark.tgz \
-                    "http://ftp.halifax.rwth-aachen.de/apache/spark/spark-${APACHE_SPARK_VERSION}/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz"
-            tar -xzf apache-spark.tgz -C "$SPARK_HOME" --strip-components=1
-            rm apache-spark.tgz
-            if ! $(grep -q "SPARK_HOME" /etc/profile)
-            then
-                echo "export SPARK_HOME=$SPARK_HOME" >> /etc/profile
-                echo 'export PATH="$PATH:$SPARK_HOME/bin"' >> /etc/profile
-            fi
-        fi
+    # Install and configure Neo4j
+    config.vm.provision "neo4j-install", type: "shell", privileged: false, run: "once", inline: <<-SHELL
+        # Install Neo4j
+        echo "Installing Neo4j..."
+        git clone https://aur.archlinux.org/neo4j-community.git
+        cd neo4j-community
+        makepkg -si --noconfirm --noprogressbar
+        cd ..
+        rm -rf neo4j-community
+    SHELL
+    config.vm.provision "neo4j-configure", type: "shell", privileged: true, run: "once", inline: <<-SHELL
+        neo4j-admin set-initial-password h6u4%kr # needs root privileges
+        systemctl enable neo4j --now
     SHELL
 
     # Install sqlite3kernel for jupyter notebook (needs jupyter installed, therefore not in root setup)

@@ -137,23 +137,20 @@ The Jupyter notebooks are executed inside the virtual machine but can be display
 Then start the Jupyter notebook server on the virtual machine with the following command. Note that port forwarding only works if you provide the argument `--ip=0.0.0.0`.
 ```sh
 (bde) [vagrant@archlinux notebooks]$ jupyter notebook --no-browser --ip=0.0.0.0
-I 10:40:13.206 NotebookApp] Writing notebook server cookie secret to /home/vagrant/.local/share/jupyter/runtime/notebook_cookie_secret
-[I 10:40:13.574 NotebookApp] [jupyter_nbextensions_configurator] enabled 0.4.1
-[I 10:40:13.574 NotebookApp] Serving notebooks from local directory: /home/vagrant/notebooks
-[I 10:40:13.574 NotebookApp] The Jupyter Notebook is running at:
-[I 10:40:13.575 NotebookApp] http://archlinux:8888/?token=6585ef8be9a9c58f17953e725450909d62051515e0b0da1a
-[I 10:40:13.575 NotebookApp]  or http://127.0.0.1:8888/?token=6585ef8be9a9c58f17953e725450909d62051515e0b0da1a
-[I 10:40:13.575 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-[C 10:40:13.579 NotebookApp]
+[I 14:14:20.847 NotebookApp] [jupyter_nbextensions_configurator] enabled 0.4.1
+[I 14:14:20.847 NotebookApp] Serving notebooks from local directory: /home/vagrant
+[I 14:14:20.848 NotebookApp] The Jupyter Notebook is running at:
+[I 14:14:20.848 NotebookApp] http://(archlinux or 127.0.0.1):8888/?token=31c1124227df5f9921b663cbcef88abf4352b6ae2785c847
+[I 14:14:20.848 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 14:14:20.850 NotebookApp]
 
     To access the notebook, open this file in a browser:
-        file:///home/vagrant/.local/share/jupyter/runtime/nbserver-560-open.html
+        file:///home/vagrant/.local/share/jupyter/runtime/nbserver-40139-open.html
     Or copy and paste one of these URLs:
-        http://archlinux:8888/?token=6585ef8be9a9c58f17953e725450909d62051515e0b0da1a
-     or http://127.0.0.1:8888/?token=6585ef8be9a9c58f17953e725450909d62051515e0b0da1a
+        http://(archlinux or 127.0.0.1):8888/?token=31c1124227df5f9921b663cbcef88abf4352b6ae2785c847
 ...
 ```
-To access the Jupyter server from your local browser, copy the link containing the IP address `127.0.0.1` from the terminal, paste it into the address bar of your browser, and hit enter. The Jupyter server opens in your browser and you see a similar page as below.
+To access the Jupyter server from your local browser, copy the link at the bottom from the terminal, paste it into the address bar of your browser, replace the part in bracktes by `localhost`, and hit enter. In this example, the link would be `http://localhost:8888/?token=31c1124227df5f9921b663cbcef88abf4352b6ae2785c847`. The Jupyter server opens in your browser and you see a similar page as below.
 ![Jupyter Notebook](https://i.imgur.com/0egNn9r.jpg)
 You can now execute the notebooks from the lecture.
 To stop the Jupyter server, you can press `Ctrl-C` in your terminal and afterwards, confirm with `y` and enter.
