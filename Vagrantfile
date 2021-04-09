@@ -121,7 +121,8 @@ Vagrant.configure("2") do |config|
         conda install -n bde -y --quiet sqlparse
         conda install -n bde -y --quiet jupyter_contrib_nbextensions
         conda install -n bde -y --quiet neo4j-python-driver
-        conda install -n bde -y --quiet py2neo
+
+        pip install py2neo # conda version is outdated
 
         jupyter nbextension enable varInspector/main
     SHELL
