@@ -94,7 +94,7 @@ Vagrant.configure("2") do |config|
         echo "Installing Python packages..."
         source /opt/miniconda3/etc/profile.d/conda.sh # add conda to path
         conda activate bde # make sure to activate virtual environment
-        # conda config --add channels conda-forge
+        conda config --add channels conda-forge
 
         conda install -n bde -y --quiet numpy
         conda install -n bde -y --quiet scipy
