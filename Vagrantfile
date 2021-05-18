@@ -123,6 +123,7 @@ Vagrant.configure("2") do |config|
         conda install -n bde -y --quiet neo4j-python-driver
 
         pip install py2neo # conda version is outdated
+        pip install getmac # not available in conda
 
         jupyter nbextension enable varInspector/main
     SHELL
