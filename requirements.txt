@@ -1,0 +1,6 @@
+altair==4.2.0
+matplotlib==3.5.2
+numpy==1.22.3
+pandas==1.4.2
+vega-datasets==0.9.0
+jupyter==1.0.0
